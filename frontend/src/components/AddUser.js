@@ -238,7 +238,6 @@ const AddUser = () => {
                                 className="user-list-item"
                             >
                                 <div>
-                                    <strong className="username">{user.username}</strong>{' '}
                                     <span className="user-role">({user.role})</span>
                                 </div>
                                 <button
