@@ -1070,10 +1070,7 @@ export default function InventoryForm() {
         .ui-payment-actions {
           position: sticky;
           bottom: 0;
-          background: #fff;
           padding: 0;
-          border-top: 1px solid #E0E0E0;
-          z-index: 2;
           display: flex;
           justify-content: flex-end;
         }
@@ -1292,9 +1289,9 @@ export default function InventoryForm() {
                 </div>
               )}
             </div>
-
-            
           </div>
+
+        
           <div className="ui-payment-actions">
             <button className="ui-button ui-button-success" onClick={handlePrint} data-action="print" disabled={cart.length === 0}>
               <FaPrint /> Print
