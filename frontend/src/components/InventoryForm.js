@@ -934,7 +934,7 @@ export default function InventoryForm() {
           flex-direction: column;
           border: 1px solid #DCDCDC;
           height: 100%;
-          width: min(1200px, 95vw);
+          width: min(1400px, 98vw);
           font-size: 0.9rem; /* Slightly smaller text */
         }
 
@@ -1079,11 +1079,11 @@ export default function InventoryForm() {
         
         
         /* Column alignment and widths */
-        .simple-cart-table th:nth-child(1), .simple-cart-table td:nth-child(1) { width: 52%; text-align: left; }
+        .simple-cart-table th:nth-child(1), .simple-cart-table td:nth-child(1) { width: 60%; text-align: left; }
         .simple-cart-table th:nth-child(2), .simple-cart-table td:nth-child(2) { width: 12%; text-align: center; }
-        .simple-cart-table th:nth-child(3), .simple-cart-table td:nth-child(3) { width: 16%; text-align: right; }
-        .simple-cart-table th:nth-child(4), .simple-cart-table td:nth-child(4) { width: 16%; text-align: right; }
-        .simple-cart-table th:nth-child(5), .simple-cart-table td:nth-child(5) { width: 4%; text-align: center; }
+        .simple-cart-table th:nth-child(3), .simple-cart-table td:nth-child(3) { width: 13%; text-align: right; }
+        .simple-cart-table th:nth-child(4), .simple-cart-table td:nth-child(4) { width: 13%; text-align: right; }
+        .simple-cart-table th:nth-child(5), .simple-cart-table td:nth-child(5) { width: 2%; text-align: center; }
 
 
         /* Clamp long item names to a single line with ellipsis */
