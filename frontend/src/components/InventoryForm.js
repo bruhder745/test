@@ -246,6 +246,109 @@ export default function InventoryForm() {
     setEditQtyItem(null);
   };
 
+  const handleAdjustQuantity = (productId, delta) => {
+    const providedPassword = window.prompt('Enter password to adjust quantity:');
+    if (!providedPassword) return;
+    if (String(providedPassword) !== String(DELETE_PASSWORD || '')) {
+      alert('Incorrect password.');
+      return;
+    }
+
+    const cartItemIndex = cart.findIndex((item) => String(item.id) === String(productId));
+    if (cartItemIndex === -1) return;
+
+    const productIndex = products.findIndex((p) => String(p.id) === String(productId));
+    if (productIndex === -1) return;
+
+    const product = products[productIndex];
+    const item = cart[cartItemIndex];
+
+    if (delta > 0) {
+      if ((product.quantity || 0) < delta) {
+        alert(`Not enough stock for ${getFullProductName(product)}. Available: ${product.quantity || 0}`);
+        return;
+      }
+      const newCart = [...cart];
+      newCart[cartItemIndex] = { ...item, quantity: item.quantity + delta };
+      const newProducts = products.map((p, idx) => (
+        idx === productIndex ? { ...p, quantity: (p.quantity || 0) - delta } : p
+      ));
+      setCart(newCart);
+      setProducts(newProducts);
+    } else if (delta < 0) {
+      const absDelta = Math.abs(delta);
+      if (item.quantity <= absDelta) {
+        const newProducts = products.map((p, idx) => (
+          idx === productIndex ? { ...p, quantity: (p.quantity || 0) + item.quantity } : p
+        ));
+        const newCart = cart.filter((ci) => String(ci.id) !== String(productId));
+        setProducts(newProducts);
+        setCart(newCart);
+      } else {
+        const newCart = [...cart];
+        newCart[cartItemIndex] = { ...item, quantity: item.quantity - absDelta };
+        const newProducts = products.map((p, idx) => (
+          idx === productIndex ? { ...p, quantity: (p.quantity || 0) + absDelta } : p
+        ));
+        setProducts(newProducts);
+        setCart(newCart);
+      }
+    }
+  };
+
+  const openEditQuantityModal = (productId) => {
+    const item = cart.find((ci) => String(ci.id) === String(productId));
+    if (!item) return;
+    setEditQtyItem(item);
+    setIsEditQtyOpen(true);
+  };
+
+  const handleConfirmEditQuantity = ({ newQuantity, password }) => {
+    if (String(password) !== String(DELETE_PASSWORD || '')) {
+      alert('Incorrect password.');
+      return;
+    }
+    if (!editQtyItem) return;
+
+    const productIndex = products.findIndex((p) => String(p.id) === String(editQtyItem.id));
+    if (productIndex === -1) return;
+
+    const currentCartQty = editQtyItem.quantity;
+    const delta = newQuantity - currentCartQty;
+
+    if (delta === 0) {
+      setIsEditQtyOpen(false);
+      setEditQtyItem(null);
+      return;
+    }
+
+    // Validate stock if increasing
+    if (delta > 0) {
+      const product = products[productIndex];
+      if ((product.quantity || 0) < delta) {
+        alert(`Not enough stock. Available: ${product.quantity || 0}`);
+        return;
+      }
+    }
+
+    // Apply change to cart and products
+    setCart((prev) => prev.map((ci) => (
+      String(ci.id) === String(editQtyItem.id) ? { ...ci, quantity: newQuantity } : ci
+    )));
+    setProducts((prev) => prev.map((p, idx) => {
+      if (idx !== productIndex) return p;
+      return { ...p, quantity: (p.quantity || 0) - delta };
+    }));
+
+    // If new quantity is 0 or less (shouldn't happen since min is 2 in modal), safeguard remove
+    if (newQuantity <= 0) {
+      setCart((prev) => prev.filter((ci) => String(ci.id) !== String(editQtyItem.id)));
+    }
+
+    setIsEditQtyOpen(false);
+    setEditQtyItem(null);
+  };
+
   const handleCloseReceiptModal = () => {
     setShowReceiptModal(false);
     setCurrentReceipt(null);
@@ -1223,6 +1326,42 @@ export default function InventoryForm() {
           background-color: #E53935;
         }
           
+        .qty-controls {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          justify-content: center;
+        }
+        .qty-button {
+          background-color: #607D8B;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          width: 28px;
+          height: 28px;
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: none;
+        }
+        .qty-button:hover {
+          background-color: #546E7A;
+        }
+        .qty-button.edit {
+          background-color: #FFB300;
+          color: #263238;
+        }
+        .qty-button.edit:hover {
+          background-color: #FFA000;
+        }
+        .qty-value {
+          min-width: 24px;
+          text-align: center;
+          display: inline-block;
+          font-weight: 600;
+        }
+
         .qty-controls {
           display: inline-flex;
           align-items: center;
